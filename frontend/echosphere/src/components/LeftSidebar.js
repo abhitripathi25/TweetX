@@ -4,8 +4,30 @@ import { IoIosNotificationsOutline } from "react-icons/io";
 import { AiOutlineLogout } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import axios from "axios";
+import { USER_API_END_POINT } from "../utils/constant";
+import { getUser, getOtherUsers, getMyProfile } from "../redux/userslice";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
 function LeftSidebar() {
   const { user } = useSelector((store) => store.user);
+   const dispatch = useDispatch();
+   const navigate = useNavigate();
+  const logoutHandler = async () => {
+    try {
+        const res = await axios.get(`${USER_API_END_POINT}/logout`);
+        dispatch(getUser(null));
+        dispatch(getOtherUsers(null));
+        dispatch(getMyProfile(null));
+        navigate('/login');
+        toast.success(res.data.message);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
   return (
     <div className="w-[20%]">
       <div>
@@ -52,7 +74,7 @@ function LeftSidebar() {
             </div>
             <h1 className="font-bold text-lg ml-2">Bookmarks</h1>
           </div>
-          <div className="flex items-center my-2 px-4 py-2 hover:bg-gray-200 hover:cursor-pointer rounded-full">
+          <div onClick={logoutHandler} className="flex items-center my-2 px-4 py-2 hover:bg-gray-200 hover:cursor-pointer rounded-full">
             <div>
               <AiOutlineLogout size="24px" />
             </div>

@@ -7,22 +7,45 @@ import { useSelector } from "react-redux";
 
 const useGetMyTweet = (id) => {
   const dispatch = useDispatch();
-  const {refresh} = useSelector((store) => store.tweet);
-  useEffect(() => {
-    const fetchMyTweets = async () => {
-      try {
-        const res = await axios.get(
-          `${TWEET_API_END_POINT}/getalltweet/${id}`,
-          { withCredentials: true }
-        );
-        dispatch(getAllTweets(res.data.tweets));
-        console.log(res.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchMyTweets();
-  }, [refresh]);
+  const {refresh,isActive} = useSelector((store) => store.tweet);
+
+
+  const fetchMyTweets = async () => {
+    try {
+      const res = await axios.get(
+        `${TWEET_API_END_POINT}/getalltweet/${id}`,
+        { withCredentials: true }
+      );
+      dispatch(getAllTweets(res.data.tweets));
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+};
+
+    const followingTweetHandler = async () =>
+  
+{
+    
+    try {
+    const res = await axios.get(
+        `${TWEET_API_END_POINT}/followingtweet/${id}`,
+        { withCredentials: true }
+    );
+    dispatch(getAllTweets(res.data.tweets));
+    
+    } catch (error) {
+    console.log(error);
+    }
+};
+
+useEffect(() => {
+    if(isActive){
+        fetchMyTweets();
+    }else{
+        followingTweetHandler();
+    }
+}, [isActive,refresh]);
 };
 
 export default useGetMyTweet;
